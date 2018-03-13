@@ -1,0 +1,278 @@
+<?php include("login_headerscript.php"); ?>
+
+<?php
+$_SESSION["query"]="";  // coming from csv download and could be large and therefore necessary to delete
+// MUST BE REMOVED
+//echo session_save_path();
+//session_destroy();
+//exit(0);
+
+$db_name="testdb"; // Database name
+$tbl_name="irf"; // Collection name
+
+$m = new Mongo();
+$db = $m->selectDB($db_name);
+$collection = new MongoCollection($db, $tbl_name);
+?>
+
+<?php
+// Gets a variable from session if available else it returns an empty variable
+// Variables are trimmed, session stored with "" if not exisitng
+function GetVarFromSession($var)
+{
+   if(isset($_SESSION[$var])) $var=trim($_SESSION[$var]);
+   else {
+      $var="";
+      $_SESSION[$var]="";
+   }
+   return $var;
+}
+?>
+
+
+<?php
+function WriteDropDownTableOfPCRdb($collection, $id)
+{
+
+   // Get all key names from irf table
+   $cursor = $collection->findOne();
+   reset($cursor);
+   while (list($user[], $val)=each($cursor));
+
+   // Take out Mongo _id and replace with nothing i.e. no selection.
+   for ($i=0; $i<count($user); $i++) {
+      if ($user[$i]=="_id") $user[$i]="";
+   }
+
+   // sort array so empty string gets to the top
+   sort($user);
+      
+   $dropdowntext='<select id="' . $id . '" name="' . $id . '">';
+   foreach ($user as $i) {
+      $dropdowntext=$dropdowntext . '<option value="' . $i . '"' . ">$i</option>";
+   }
+   $dropdowntext=$dropdowntext . '</select>';
+   $_SESSION["irf_dropdownfilterkey_$id"]=$dropdowntext;
+
+
+   // to make default selection the part of selection is replaced with new part inclufing 'selected' within html
+   $key=GetVarFromSession("irf_select_".$id);
+   $dropdowntext=str_replace('<option value="'.$key.'">'.$key.'</option>',
+                             '<option selected value="'.$key.'">'.$key.'</option>',         
+                             $dropdowntext );
+
+   echo $dropdowntext;
+}
+?>
+
+<?php
+function WriteDropDownTableOfLogicalOperator($id)
+{
+  echo '<select id="' . $id . '" name="' . $id . '">';
+  ?>
+  <option value="and">and</option>
+  <option value="or">or</option>
+  </select> 
+  <?php
+}
+?>
+
+<?php
+function GenerateSelect($name = '', $options = array(), $nameselection) {
+// Generate a table based on the array input. 
+// Drop down list gets named: $name
+// $options: The key of the array
+// $value: The values of the array
+// $nameselection: If set it is matched all $value and if it matches, it makes this value the default selection
+// http://www.kavoir.com/2009/02/php-drop-down-list.html
+// if $value starts with '*' it will be the selected in the drop down
+   $html = '<select name="'.$name.'">';
+   foreach ($options as $option => $value) {
+      if ($value==$nameselection) {
+         $html .= '<option selected value='.$value.'>'.$option.'</option>';
+      }
+      else $html .= '<option value='.$value.'>'.$option.'</option>';
+   }
+   $html .= '</select>';
+   return $html;
+}
+?>
+
+<?php
+function WriteDropDownTableOfMatching($id)
+{
+   
+//   $val[$i]=GetVarFromSession("select_".$id);  // selected="selected"
+
+  echo '<select id="' . $id . '" name="' . $id . '">';
+  ?>
+  <option value="contains">contains</option>
+  <option value="equals">=</option>
+  <option value="notequal">&lt;&gt;</option>
+  <option selected value="gre">&gt;</option>
+  <option value="greequ">&gt;=</option>
+  <option value="les">&lt;</option>
+  <option value="lesequ">&lt;=</option>
+  
+  </select> 
+  <?php
+}
+?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
+<title>Search IRF Turning Torso</title>
+</head>
+<body>
+<?php include("headerline.html"); ?>
+<font size=+1><b>IRF Search form</b></font>
+<?php
+// If GET method returns 'yes' then clear all forms
+if(isset($_GET["clearforms"])) {
+   $_SESSION["irfsearchnum"]="";
+   $_SESSION["irfsearchsubject"]="";
+   $_SESSION["irfsearchdescription"]="";
+   for($i=0;$i<4;$i++) {
+      $_SESSION["irf_select_key".$i]="";
+      $_SESSION["irf_select_log".$i]="";
+      $_SESSION["irf_select_op".$i]="";
+      $_SESSION["irf_select_val".$i]="";
+   }
+}
+
+$irfsearchnum=GetVarFromSession("irfsearchnum");
+if($irfsearchnum=='0') $irfsearchnum="";  // necessary as it returns as integer = 0
+$irfsearchsubject=GetVarFromSession("irfsearchsubject");
+$irfsearchdescription=GetVarFromSession("irfsearchdescription");
+$irfsearchframesize=GetVarFromSession("irfsearchframesize");
+if($irfsearchframesize=="") $irfsearchframesize=600;
+
+?>
+<form action="irf_list.php" method="post">
+<table border="0">
+<!-- row 1 -->
+<tr>
+<td>IRF# (e.g. DK_EKDK_B1_0012):</td>
+<td><input type="text" name="irfsearchnum" value="<?php echo $irfsearchnum;?>"/></td>
+<td> </td>
+<td> </td>
+</tr>
+<!-- row 4 -->
+<tr>
+<td>Subject:</td>
+<td><input type="text" name="irfsearchsubject" value="<?php echo $irfsearchsubject;?>" /></td>
+<td> </td>
+<td> </td>
+</tr>
+<!-- row 5 -->
+<tr>
+<td>Description:</td>
+<td><input type="text" name="irfsearchdescription" value="<?php echo $irfsearchdescription;?>" /></td>
+</td>
+<td> </td>
+</tr>
+<!-- row 6 -->
+<tr>
+<td>Frame Size:</td>
+<td><input type="text" name="irfsearchframesize" value="<?php echo $irfsearchframesize;?>" /></td>
+<td> </td>
+<td> </td>
+</table> 
+<br>
+<!-- Combined search form -->
+<?php
+for($i=0;$i<4;$i++) {
+   //$key[$i]=GetVarFromSession("select_key".$i);
+   $log[$i]=GetVarFromSession("irf_select_log".$i);
+   $op[$i]=GetVarFromSession("irf_select_op".$i); 
+   $val[$i]=GetVarFromSession("irf_select_val".$i);
+}
+
+// $html = GenerateSelect('company', $companies);
+
+
+// Make table of 4 rows for advanced search query
+$operators = array(
+//      option => value
+	'='        => 'equals',          //   =
+	'&lt;&gt;' => 'notequal',        //   <>
+	'&gt;'     => 'gre',             //   >
+	'&gt;='    => 'greequ',          //   >=
+	'&lt;'     => 'les',             //   <
+	'&lt;='    => 'lesequ',          //   <=
+        'contains'        => 'contains',          //   contains
+
+);
+
+?>
+
+<?php
+// Rows of logical drop down
+$logic = array(
+//      option => value
+	'and' => 'and', 
+	'or'  => 'or',  
+);
+
+
+echo '<table border="0">';
+for($i=0;$i<4;$i++) {
+  ?><tr><td><?php  // next row , column 1
+  echo WriteDropDownTableOfPCRdb($collection, "key".$i);
+  ?></td><td><?php  // column 2 
+  $nameselection="";
+  foreach ($operators as $option => $value) {
+      if ($value == $op[$i]) {
+         $nameselection=$value;   // make it default selected in drop down
+         break;
+      }
+  }
+  echo GenerateSelect("op".$i, $operators, $nameselection);
+  ?></td><td><?php  // column 3 
+  echo '<input type="text" name="val'.$i.'" value="'.$val[$i].'"/>';
+  ?></td><td><?php  // column 4
+  if($i<3) {   // there are only 3 logical operators so avoid the last   
+     $nameselection="";
+     foreach ($logic as $option => $value) {
+         if ($value == $log[$i]) {
+            $nameselection=$value;   // make it default selected in drop down
+            break;
+         }
+     }
+     echo GenerateSelect("log".$i, $logic, $nameselection);
+  }
+  ?></td><td><?php  // column 5 
+  ?></tr><?php  // end of row
+}
+echo '</table><br>';
+?>
+</table> 
+<br>
+
+
+<input type="submit" />
+<a href="irf_search.php?clearforms=yes">Clear forms</a>
+</form>
+<?php
+session_write_close();  // remember to close session fast to avoid locks in response
+?>
+<font size=-1  face="verdana" color="blue">
+<pre>
+There are two ways to do search. Using the top 4 input fields or the lower 4 fields.
+It is not possible to combine those two parts !!!
+
+Top 3: If something is written in a field above, it will take action and any other
+fields below will be ignored.
+
+Low 4: If you want to do a combined search then use the lower 4 fields and make
+sure nothing is written into the top 5 fields.
+
+Frame Size is used to limit the amount if lines shown when listing the search. If
+it is below 200, information on left side of listed table is reduced. If it is 0,
+then only headings/Subjects are shown.
+</pre>
+</font>
+</body>
+</html> 
+
+

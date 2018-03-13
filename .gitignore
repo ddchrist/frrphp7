@@ -1,0 +1,16 @@
+attachments/*
+ClearQuest_files/*
+gaia/*
+gaia2/*
+genghis/*
+signin/*
+testchecks/*
+tmp/*
+vendor/*
+*.xls*
+*.cvs
+*.zip
+*.txt
+*.old
+*.png
+*.gif

@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+
+<a id="detectionphase"><b>DetectionPhase</b></a>
+<br>
+<br>
+<table border="1">
+<tr>
+<th>
+Short name
+</th>
+<th>
+Raised during
+</th>
+<th>
+Comments
+</th>
+</tr>
+<tr>
+<td>
+FAT
+</td>
+<td>
+Factory Acceptance Tests (performed with the customer)
+</td>
+<td>
+Only to be used if the defect is detected
+during the FAT by a person actually
+participating in the FAT.
+</td>
+</tr>
+<tr>
+<td>
+FInT 
+</td>
+<td>
+Factory Integration Tests
+</td>
+<td>
+To be coupled with an IBB (“Phase Stage”
+field) only if the defect is detected during
+actual IBB testing by a person actually
+participating in the IBB testing, otherwise
+leave the “Phase Stage” blank.
+</td>
+</tr>
+<tr>
+<td>
+OST
+</td>
+<td>
+Operational support and training
+activities
+</td>
+<td>
+Only to be used if the defect is detected
+during the OST phase by a person
+actually participating in OST activities.
+</td>
+</tr>
+<tr>
+<td>
+Pre-FAT
+</td>
+<td>
+Factory Acceptance Tests (performed
+by V&V)
+</td>
+<td>
+Only to be used if the defect is detected
+during the Pre-FAT by a person actually
+participating in the Pre-FAT.
+</td>
+</tr>
+<tr>
+<td>
+Pre-SAT
+</td>
+<td>
+Site Acceptance Tests (performed by
+V&V)
+</td>
+<td>
+Only to be used if the defect is detected
+during the Pre-SAT by a person actually
+participating in the Pre-SAT.
+</td>
+</tr>
+<tr>
+<td>
+Post-SAT 
+</td>
+<td>
+Warranty period
+</td>
+<td>
+Only to be used if the defect is detected
+after SAT acceptance
+</td>
+</tr>
+<tr>
+<td>
+SAT
+</td>
+<td>
+Site Acceptance Tests (performed with
+the customer)
+</td>
+<td>
+Only to be used if the defect is detected
+during the SAT by a person actually
+participating in the SAT.
+</td>
+</tr>
+<tr>
+<td>
+SInT
+</td>
+<td>
+Site Integration Tests
+</td>
+<td>
+Only to be used by a person on site
+actually participating in site integration
+tasks.
+</td>
+</tr>
+<tr>
+<td>
+SWDev
+</td>
+<td>
+Development stage
+</td>
+<td>
+Only to be used if the defect is detected,
+during any of the other phases, by a
+person not actually participating in any of
+these phases.
+</td>
+</tr>
+<tr>
+<td>
+V&V
+</td>
+<td>
+Factory V&V Tests (Internal Validation)
+– Generally coupled with an IBB
+(“Phase Stage” field)
+</td>
+<td>
+Only to be used if the defect is detected
+during Internal Validation by a person
+actually participating in Internal Validation.
+</td>
+</tr>
+</table>
+<br>
+<b>Note!</b> 'Post-SAT' should cover all PCRs found after it is delivered to the customer/COOPANS. However, in reality Thales does not have a strict discipline here and many have also been marked as V&V although that this should only be Thales internal V&V.
+<br><br>
+<hr>
+<a id="origin"><b>ORIGIN</b></a>
+<br>
+<pre>
+Modified list of Origin values to be provided when:
+   Doc status=cor | cli | clo
+OR when
+   S/W status=cor | cli | clo
+Origin = Injection Phase
+</pre>
+<table border="1">
+<tr>
+<th>Category</th>
+<th>Source of Problem - Reference</th>
+<th>Source of Problem - Description</th>
+</tr>
+<tr>
+<td>
+Proposal 
+</td>
+<td>
+ECP or Contract 
+</td>
+<td>
+Customer needs was unclear or misinterpreted
+</td>
+</tr>
+<tr>
+<td>
+System
+Specification
+</td>
+<td>
+SSS, OH, SMF 
+</td>
+<td>
+System Requirement definition was not adequate
+</td>
+</tr>
+<tr>
+<td>
+Interface
+Definition
+</td>
+<td>
+ICD, IRS, SMF 
+</td>
+<td>
+Interface definition was not adequate
+</td>
+</tr>
+<tr>
+<td>
+System Design 
+</td>
+<td>
+SSDD
+</td>
+<td>
+Error in System Design
+</td>
+</tr>
+<tr>
+<td>
+Hardware Design 
+</td>
+<td>
+SSDD, HDD 
+</td>
+<td>
+Error in Hardware Design
+</td>
+</tr>
+<tr>
+<td>
+Software
+Specification
+</td>
+<td>
+SRS, SCN-SRS 
+</td>
+<td>
+Software Requirement definition was not adequate
+</td>
+</tr>
+<tr>
+<td>
+Software Design 
+</td>
+<td>
+MF, SDD 
+</td>
+<td>
+Error in Software Design
+</td>
+</tr>
+<tr>
+<td>
+Coding
+</td>
+<td>
+ECR
+</td>
+<td>
+Code Software coding bug
+</td>
+</tr>
+<tr>
+<td>
+Coding Kernel 
+</td>
+<td>
+Legacy Code 
+</td>
+<td>
+Software Coding bug In Legacy Code
+</td>
+</tr>
+<tr>
+<td>
+Regression
+</td>
+<td>
+ECR / PCR Code 
+</td>
+<td>
+ECR / PCR coding side-effect on the existing code
+</td>
+</tr>
+<tr>
+<td>
+Import
+</td>
+<td>
+ECR / PCR Code 
+</td>
+<td>
+Import side-effect on the existing code
+</td>
+</tr>
+<tr>
+<td>
+Parameter
+</td>
+<td>
+Data Set, Configuration 
+</td>
+<td>
+Data Set error, platform configuration (nsf, ncf), etc
+</td>
+</tr>
+<tr>
+<td>
+Other
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+</table>
+</body>
+</html>
